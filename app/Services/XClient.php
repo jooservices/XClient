@@ -39,6 +39,20 @@ class XClient
         return $this->request(__FUNCTION__, $endpoint, array_merge($this->buildPayload(__FUNCTION__, $payload), $options));
     }
 
+    /**
+     * Set the content type
+     *
+     * @param string $contentType
+     *
+     * @return $this
+     */
+    public function setContentType(string $contentType = 'json'): self
+    {
+        $this->contentType = $contentType;
+
+        return $this;
+    }
+
     public function request(string $method, string $endpoint, array $options = []): ?XResponseInterface
     {
         $method = strtoupper($method);
