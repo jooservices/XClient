@@ -101,7 +101,6 @@ class XClient
 
             return $xresponse;
         }
-
     }
 
     private function buildPayload(string $method, array $payload): array

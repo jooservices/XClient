@@ -7,6 +7,7 @@ use App\Http\Requests\QueueRequest;
 use App\Models\Queue;
 use App\Services\XClient;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Cache;
 
 class CrawlingController extends Controller
 {
@@ -15,13 +16,19 @@ class CrawlingController extends Controller
         $client = app(XClient::class);
         $method = strtolower($request->input('method'));
 
-        $content = $client
-            ->{$method}(
-                $request->input('url'),
-                $request->input('payload'),
-                $request->input('options')
-            )
-            ->getBody();
+        $content = Cache::remember(
+            md5(serialize($request->toArray())),
+            60 * 60,
+            function () use ($client, $method, $request) {
+                return $client
+                    ->{$method}(
+                        $request->input('url'),
+                        $request->input('payload'),
+                        $request->input('options')
+                    )
+                    ->getBody();
+            }
+        );
 
         return response($content);
     }
